@@ -19,9 +19,16 @@ function isSubsequence(str1, str2) {
   
 }
 
-console.log(isSubsequence('hello', 'hello world'));
-// console.log(isSubsequence('sing', 'sting'));
-// console.log(isSubsequence('abc', 'abracadabra'));
-// console.log(isSubsequence('abc', 'acb'));
-// console.log(isSubsequence('aaa', "Madam, I'm Adam"));
-// console.log(isSubsequence('Thqckbrwnfxjmpdvrthlzydg', "The quick brown fox jumped over the lazy dog"));
+function isSubsequenceRecursive(str1, str2) {
+    if (str1.length < 1) return true;
+    if (str2.length < 1) return false;
+    if (str1[0] === str2[0]) return isSubsequenceRecursive(str1.slice(1), str2.slice(1));
+    return isSubsequenceRecursive(str1, str2.slice(1));
+}
+
+// console.log(isSubsequenceRecursive('hello', 'hello world'));
+// console.log(isSubsequenceRecursive('sing', 'sting'));
+// console.log(isSubsequenceRecursive('abc', 'abracadabra'));
+// console.log(isSubsequenceRecursive('abc', 'acb'));
+// console.log(isSubsequenceRecursive('aaa', "Madam, I'm Adam"));
+// console.log(isSubsequenceRecursive('Thqckbrwnfxjmpdvrthlzydg', "The quick brown fox jumped over the lazy dog"));
