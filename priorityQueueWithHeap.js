@@ -1,9 +1,10 @@
-class BinaryHeap {
+class PriorityQueue {
+
     constructor() {
         this.values = [];
     }
 
-    insert(value) {
+    enqueue(value) {
         this.values.push(value);
 
         let currIndex = this.values.length - 1;
@@ -11,7 +12,7 @@ class BinaryHeap {
         let temp;
 
         while (parentIndex >= 0) {
-            if (this.values[currIndex] <= this.values[parentIndex]) break;
+            if (this.values[currIndex].priority <= this.values[parentIndex].priority) break;
             temp = this.values[parentIndex];
             this.values[parentIndex] = this.values[currIndex]; 
             this.values[currIndex] = temp;
@@ -20,7 +21,7 @@ class BinaryHeap {
         }
     }
 
-    extractMax() { 
+    dequeue() { 
         let swapLeft = (curr, left) => {
             [this.values[curr], this.values[left]] = [this.values[left], this.values[curr]];
         }
@@ -43,8 +44,8 @@ class BinaryHeap {
 
             let swap = false;
 
-            if (this.values[curr] < this.values[left]) {
-                if (this.values[left] < this.values[right]) {
+            if (this.values[curr] && this.values[left] && this.values[curr].priority < this.values[left].priority) {
+                if (this.values[left].priority < this.values[right].priority) {
                     swapRight(curr, right);
                     curr = right;
                     swap = true;
@@ -53,7 +54,7 @@ class BinaryHeap {
                     curr = left;
                     swap = true;
                 }
-            } else if (this.values[curr] < this.values[right]) {
+            } else if (this.values[curr] && this.values[right] && this.values[curr].priority < this.values[right].priority) {
                 swapRight(curr, right);
                 curr = right;
                 swap = true;
@@ -67,18 +68,14 @@ class BinaryHeap {
 
         return max;
     }
-
 }
 
-const bh = new BinaryHeap();
-bh.insert(41);
-bh.insert(39);
-bh.insert(33);
-bh.insert(18);
-bh.insert(27);
-bh.insert(12);
-bh.insert(55);
+const pq = new PriorityQueue();
+pq.enqueue({ value: 'Common cold', priority: 1 });
+pq.enqueue({ value: 'Gunshot wound', priority: 5 });
+pq.enqueue({ value: 'Hight fever', priority: 2 });
 
-var res = bh.extractMax();
-console.log(res);
-console.log(bh.values);
+console.log(pq.dequeue());
+console.log(pq.dequeue());
+console.log(pq.dequeue());
+console.log(pq.values);
