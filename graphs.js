@@ -23,6 +23,26 @@ class Graphs {
     }
     delete this.adjecentList[vertex];
   }
+
+  dfs(vertex) {
+    vertex = vertex ?? '';
+    if (!vertex.trim().length) return undefined;
+
+    let track = {};
+    let result = [];
+
+    let helper = (v) => {
+      if (!this.adjecentList[v]) return undefined;
+      track[v] = true;
+      result.push(v);
+      this.adjecentList[v].forEach(v2 => {
+        if (!track[v2]) helper(v2);
+      });
+    }
+
+    helper(vertex);
+    return result;
+  }
 }
 
 const g = new Graphs();
@@ -31,22 +51,26 @@ g.addVertex('B');
 g.addVertex('C');
 g.addVertex('D');
 g.addVertex('E');
+g.addVertex('F');
 
 g.addEdge('A', 'B');
 g.addEdge('A', 'C');
-g.addEdge('A', 'E');
-g.addEdge('B', 'C');
+g.addEdge('B', 'D');
 g.addEdge('C', 'E');
-g.addEdge('C', 'D');
 g.addEdge('D', 'E');
+g.addEdge('D', 'F');
+g.addEdge('E', 'F');
 
-console.log(g.adjecentList);
+// console.log(g.adjecentList);
 
-g.removeEdge('A', 'B');
+// g.removeEdge('A', 'B');
 
-console.log(g.adjecentList);
+// console.log(g.adjecentList);
 
-g.removeVertex('A');
-g.removeVertex('E');
+// g.removeVertex('A');
+// g.removeVertex('E');
 
-console.log(g.adjecentList);
+// console.log(g.adjecentList);
+
+// traverse all vertises
+console.log('DFS:', g.dfs('A'));
