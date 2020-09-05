@@ -25,9 +25,6 @@ class Graphs {
   }
 
   dfsRecusive(vertex) {
-    vertex = vertex ?? '';
-    if (!vertex.trim().length) return undefined;
-
     let track = {};
     let result = [];
 
@@ -35,7 +32,7 @@ class Graphs {
       if (!this.adjecentList[v]) return undefined;
       track[v] = true;
       result.push(v);
-      this.adjecentList[v].forEach(v2 => {
+      this.adjecentList[v].map(v2 => {
         if (!track[v2]) helper(v2);
       });
     }
@@ -52,18 +49,58 @@ class Graphs {
     stack.push(vertex);
 
     while (stack.length) {
+
       let vertex = stack.pop();
+
       if (!tracking[vertex]) {
         tracking[vertex] = true;
         result.push(vertex);
-        this.adjecentList[vertex].forEach(item => {
-          stack.push(item);
-        });
+        this.adjecentList[vertex].map(item => stack.push(item));
       }
     }
 
     return result;
   }
+
+  bfsIterative(vertex) {
+    const queue = [];
+    const tracking = {};
+    const result = [];
+
+    queue.push(vertex);
+
+    while(queue.length) {
+
+      let vertex = queue.shift();
+
+      if (!tracking[vertex]) {
+        tracking[vertex] = true;
+        result.push(vertex);
+        this.adjecentList[vertex].map(item => queue.push(item));
+      }
+    }
+
+    return result;
+  }
+
+  bfsRecursive(vertex) {
+    const helper = (queue, tracking = {}, result = []) => {
+      if (!queue.length) return result;
+
+      let vertex = queue.shift();
+
+      if (!tracking[vertex]) {
+        tracking[vertex] = true;
+        result.push(vertex);
+        this.adjecentList[vertex].map(item => queue.push(item));
+      }
+
+      return helper(queue, tracking, result);
+    }
+
+    return helper([vertex]);
+  }
+
 
 }
 
@@ -83,17 +120,18 @@ g.addEdge('D', 'E');
 g.addEdge('D', 'F');
 g.addEdge('E', 'F');
 
-// console.log(g.adjecentList);
-
-// g.removeEdge('A', 'B');
-
-// console.log(g.adjecentList);
-
-// g.removeVertex('A');
-// g.removeVertex('E');
-
-// console.log(g.adjecentList);
-
-// traverse all vertises
 console.log('DFS Recursive', g.dfsRecusive('A'));
 console.log('DFS Iterative', g.dfsInterative('A'));
+console.log('BFS Iterative', g.bfsIterative('A'));
+console.log('BFS Recursive', g.bfsRecursive('A'));
+
+console.log(g.adjecentList);
+
+g.removeEdge('A', 'B');
+
+console.log(g.adjecentList);
+
+g.removeVertex('B');
+g.removeVertex('E');
+
+console.log(g.adjecentList);
