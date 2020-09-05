@@ -24,7 +24,7 @@ class Graphs {
     delete this.adjecentList[vertex];
   }
 
-  dfs(vertex) {
+  dfsRecusive(vertex) {
     vertex = vertex ?? '';
     if (!vertex.trim().length) return undefined;
 
@@ -43,6 +43,28 @@ class Graphs {
     helper(vertex);
     return result;
   }
+
+  dfsInterative(vertex) {
+    const stack = [];
+    const tracking = {};
+    const result = [];
+
+    stack.push(vertex);
+
+    while (stack.length) {
+      let vertex = stack.pop();
+      if (!tracking[vertex]) {
+        tracking[vertex] = true;
+        result.push(vertex);
+        this.adjecentList[vertex].forEach(item => {
+          stack.push(item);
+        });
+      }
+    }
+
+    return result;
+  }
+
 }
 
 const g = new Graphs();
@@ -73,4 +95,5 @@ g.addEdge('E', 'F');
 // console.log(g.adjecentList);
 
 // traverse all vertises
-console.log('DFS:', g.dfs('A'));
+console.log('DFS Recursive', g.dfsRecusive('A'));
+console.log('DFS Iterative', g.dfsInterative('A'));
