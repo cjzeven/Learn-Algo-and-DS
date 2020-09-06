@@ -1,3 +1,26 @@
+class PriorityQueue {
+  constructor() {
+    this.queue = [];
+  }
+
+  enqueue(value, priority) {
+    this.queue.push({ value, priority });
+    this.sorting();
+  }
+
+  dequeue() {
+    return this.queue.shift();
+  }
+
+  sorting() {
+    this.queue = this.queue.sort((a, b) => a.priority - b.priority);
+  }
+
+  length() {
+    return this.queue.length;
+  }
+}
+
 class WeightedGraphs {
   constructor() {
     this.adjecentList = {};
@@ -72,6 +95,53 @@ class WeightedGraphs {
     return data;
   }
 
+  dijkstraWithNaivePriorityQueue(start, finish) {
+    const visited = {};
+    const distances = {};
+    const previous = {};
+    const queue = new PriorityQueue();
+
+    for (let vertex in this.adjecentList) {
+      distances[vertex] = vertex === start ? 0 : Infinity;
+      previous[vertex] = null;
+      queue.enqueue(vertex, distances[vertex]);
+    }
+
+    let smallest;
+
+    while(queue.length()) {
+
+      smallest = queue.dequeue().value;
+
+      for (let vertex of this.adjecentList[smallest]) {
+
+        if (visited[vertex.node]) continue;
+
+        let newValue = vertex.weight + distances[smallest];
+
+        if (newValue < distances[vertex.node]) {
+          distances[vertex.node] = newValue;
+          previous[vertex.node] = smallest;
+          visited[smallest] = true;
+        }
+
+      }
+
+    }
+
+    const result = [finish];
+    let data;
+
+    while(previous[finish]) {
+      data = previous[finish];
+      result.unshift(data);
+      finish = data;
+    }
+
+    return result;
+
+  }
+
 }
 
 const g = new WeightedGraphs();
@@ -91,4 +161,5 @@ g.addEdge('D', 'E', 3);
 g.addEdge('D', 'F', 1);
 g.addEdge('E', 'F', 1);
 
-console.log(g.naiveDijkstra('A', 'E'));
+console.log(g.naiveDijkstra('A', 'C'));
+console.log(g.dijkstraWithNaivePriorityQueue('A', 'D'));
