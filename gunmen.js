@@ -94,10 +94,10 @@ let map = [
   [' ', ' ', ' ', ' ', ' ', '#', ' ', ' '],
   ['#', ' ', '#', ' ', ' ', '#', ' ', '#'],
   [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-  [' ', ' ', '#', ' ', ' ', ' ', ' ', ' '],
-  // [' ', ' ', ' ', ' ', ' ', '#', ' ', '#'],
-  // [' ', '#', ' ', ' ', ' ', ' ', ' ', ' '],
-  // [' ', ' ', ' ', ' ', '#', ' ', '#', ' '],
+  [' ', ' ', ' ', '#', ' ', ' ', ' ', ' '],
+  [' ', ' ', ' ', ' ', ' ', '#', ' ', '#'],
+  [' ', '#', ' ', ' ', ' ', ' ', ' ', ' '],
+  [' ', ' ', ' ', ' ', '#', ' ', '#', ' '],
 ];
 
 
@@ -138,8 +138,16 @@ for (let cell of extractedMap) {
 }
 
 // result
+let max = 0;
 for (let zzz in memoRes) {
-  console.log(memoRes[zzz]);
+  let gunmen = 0;
+  memoRes[zzz].map(item => {
+    let itemJoined = item.join('|');
+    gunmen += (itemJoined.match(new RegExp("g", "g")) || []).length;
+    console.log(itemJoined);
+  });
+  console.log('Total gunmen:', gunmen);
+  console.log("\n");
 }
 
 function test(map, extractedMap) {
@@ -148,7 +156,7 @@ function test(map, extractedMap) {
   // console.log('sini', map, extractedMap);
   // return;
 
-  function helper(newMap, memoExtMap = []) {
+  function helper(newMap, memoExtMap = [], memoMap = []) {
 
     let key = newMap.flat().join();
     let em = [];
@@ -181,13 +189,21 @@ function test(map, extractedMap) {
         // console.log(em);
         // console.log('outcome', newMap);
 
-        data = JSON.parse(JSON.stringify(newMap));
+        let key = newMap.flat().join();
+
+        if (memoMap[key]) {
+          data = memoMap[key];
+          continue;
+        } else {
+          data = JSON.parse(JSON.stringify(newMap));
+          memoMap[key] = data;
+        }
 
         // em.shift();
 
         // console.log(em);
 
-        helper(newMap, memoExtMap);
+        helper(newMap, memoExtMap, memoMap);
 
         newMap[cell.y][cell.x] = ' ';
       }
