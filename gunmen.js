@@ -90,15 +90,16 @@ function isValidPosition(map, pos) {
 }
 
 function calculate(map) {
-  function helper(map, memoAvailableCells = [], memoPatterns = []) {
+  let extractedMap = extractMap(map);
 
+  function helper(map, memoAvailableCells = [], memoPatterns = []) {
     let key = map.flat().join();
     let availableCells = [];
 
     if (memoAvailableCells[key]) {
       availableCells = memoAvailableCells[key];
     } else {
-      availableCells = extractMap(map);
+      availableCells = extractedMap;
       memoAvailableCells[key] = availableCells;
     }
 
@@ -108,8 +109,8 @@ function calculate(map) {
 
       if (isValidPosition(map, cell)) {
         map = generate(map, cell);
-        let key = map.flat().join();
 
+        let key = map.flat().join();
         if (memoPatterns[key]) {
           data = memoPatterns[key];
           continue;
