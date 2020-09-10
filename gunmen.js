@@ -89,24 +89,24 @@ function isValidPosition(map, pos) {
   return true;
 }
 
-// let map = [
-  // [' ', '#', ' ', '#', ' ', '#', ' ', '#'],
-  // [' ', ' ', ' ', ' ', ' ', '#', ' ', ' '],
-  // ['#', ' ', '#', ' ', ' ', '#', ' ', '#'],
-  // [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-  // [' ', ' ', '#', ' ', ' ', ' ', ' ', ' '],
+let map = [
+  [' ', '#', ' ', '#', ' ', '#', ' ', '#'],
+  [' ', ' ', ' ', ' ', ' ', '#', ' ', ' '],
+  ['#', ' ', '#', ' ', ' ', '#', ' ', '#'],
+  [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+  [' ', ' ', '#', ' ', ' ', ' ', ' ', ' '],
   // [' ', ' ', ' ', ' ', ' ', '#', ' ', '#'],
   // [' ', '#', ' ', ' ', ' ', ' ', ' ', ' '],
   // [' ', ' ', ' ', ' ', '#', ' ', '#', ' '],
-// ];
-
-
-let map = [
-  ['#', '#', '#', ' '],
-  [' ', ' ', ' ', ' '],
-  [' ', '#', ' ', ' '],
-  ['#', '#', '#', ' '],
 ];
+
+
+// let map = [
+//   ['#', '#', '#', ' '],
+//   [' ', ' ', ' ', ' '],
+//   [' ', '#', ' ', ' '],
+//   ['#', '#', '#', ' '],
+// ];
 
 // let map = [
 //     ['#', ' '],
@@ -119,19 +119,27 @@ let map = [
 //   ['#', ' ', ' '],
 // ];
 
+var memoRes = [];
+
 let extractedMap = extractMap(map);
 
 for (let cell of extractedMap) {
   let theMap = JSON.parse(JSON.stringify(map));
   let newMap = generate(theMap, cell);
   
-  console.log('income');
-  console.log(newMap);
+  // console.log('income');
+  // console.log(newMap);
 
   let res = test(newMap, JSON.parse(JSON.stringify(extractedMap)));
-  console.log('outcome');
-  console.log(res);
-  console.log("\n====================================\n");
+  // console.log('outcome');
+  // console.log(res);
+  // let key = newMap.flat().join();
+  // console.log("\n====================================\n");
+}
+
+// result
+for (let zzz in memoRes) {
+  console.log(memoRes[zzz]);
 }
 
 function test(map, extractedMap) {
@@ -188,5 +196,13 @@ function test(map, extractedMap) {
 
   helper(map);
   // console.log(maxGunmen);
-  return data;
+
+  let key = data.flat().join();
+
+  if (!memoRes[key]) {
+    memoRes[key] = data;
+    // return data;
+  }
+
+  // return data;
 }
