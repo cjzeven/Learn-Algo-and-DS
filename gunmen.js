@@ -89,24 +89,84 @@ function isValidPosition(map, pos) {
   return true;
 }
 
-let map = [
-  [' ', '#', ' ', '#', ' ', '#', ' ', '#'],
-  [' ', ' ', ' ', ' ', ' ', '#', ' ', ' '],
-  ['#', ' ', '#', ' ', ' ', '#', ' ', '#'],
-  [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-  [' ', ' ', ' ', '#', ' ', ' ', ' ', ' '],
-  [' ', ' ', ' ', ' ', ' ', '#', ' ', '#'],
-  [' ', '#', ' ', ' ', ' ', ' ', ' ', ' '],
-  [' ', ' ', ' ', ' ', '#', ' ', '#', ' '],
-];
+function calculate(map) {
+  function helper(map, memoAvailableCells = [], memoPatterns = []) {
 
+    let key = map.flat().join();
+    let availableCells = [];
 
-// let map = [
-//   ['#', '#', '#', ' '],
-//   [' ', ' ', ' ', ' '],
-//   [' ', '#', ' ', ' '],
-//   ['#', '#', '#', ' '],
-// ];
+    if (memoAvailableCells[key]) {
+      availableCells = memoAvailableCells[key];
+    } else {
+      availableCells = extractMap(map);
+      memoAvailableCells[key] = availableCells;
+    }
+
+    for (let index in availableCells) {
+
+      let cell = availableCells[index];
+
+      if (isValidPosition(map, cell)) {
+        map = generate(map, cell);
+        let key = map.flat().join();
+
+        if (memoPatterns[key]) {
+          data = memoPatterns[key];
+          continue;
+        } else {
+          data = JSON.parse(JSON.stringify(map));
+          memoPatterns[key] = data;
+        }
+
+        helper(map, memoAvailableCells, memoPatterns);
+        map[cell.y][cell.x] = ' ';
+      }
+    }
+  }
+
+  let data = [];
+  helper(map);
+  let key = data.flat().join();
+
+  if (!globalResult[key]) globalResult[key] = data;
+
+}
+
+function calculateValues(result) {
+  let max = 0;
+  let ways = 0;
+
+  for (let index in result) {
+    if (!result[index].length) continue;
+
+    let gunmen = 0;
+
+    result[index].map(item => {
+      let itemJoined = item.join('|');
+      gunmen += (itemJoined.match(new RegExp("g", "g")) || []).length;
+      console.log(itemJoined);
+    });
+
+    if (max < gunmen) max = gunmen;
+
+    console.log('Gunmen:', gunmen);
+    console.log("\n");
+  }
+
+  for (let index in result) {
+    if (!result[index].length) continue;;
+
+    let gunmen = result[index].reduce((acc, item) => {
+      return acc + (item.join('').match(new RegExp("g", "g")) || []).length;
+    }, 0);
+
+    if (gunmen === max) ways++;
+  }
+
+  return { max, ways };
+}
+
+//==================================== Execute =======================================
 
 // let map = [
 //     ['#', ' '],
@@ -119,106 +179,37 @@ let map = [
 //   ['#', ' ', ' '],
 // ];
 
-var memoRes = [];
+// let map = [
+//   ['#', '#', '#', ' '],
+//   [' ', ' ', ' ', ' '],
+//   [' ', '#', ' ', ' '],
+//   ['#', '#', '#', ' '],
+// ];
+
+// let map = [
+//   [' ', '#', ' ', '#', ' ', '#', ' ', '#'],
+//   [' ', ' ', ' ', ' ', ' ', '#', ' ', ' '],
+//   ['#', ' ', '#', ' ', ' ', '#', ' ', '#'],
+//   [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+//   [' ', ' ', ' ', '#', ' ', ' ', ' ', ' '],
+//   [' ', ' ', ' ', ' ', ' ', '#', ' ', '#'],
+//   [' ', '#', ' ', ' ', ' ', ' ', ' ', ' '],
+//   [' ', ' ', ' ', ' ', '#', ' ', '#', ' '],
+// ];
+
+
+let globalResult = {};
 
 let extractedMap = extractMap(map);
 
 for (let cell of extractedMap) {
   let theMap = JSON.parse(JSON.stringify(map));
   let newMap = generate(theMap, cell);
-  
-  // console.log('income');
-  // console.log(newMap);
-
-  let res = test(newMap, JSON.parse(JSON.stringify(extractedMap)));
-  // console.log('outcome');
-  // console.log(res);
-  // let key = newMap.flat().join();
-  // console.log("\n====================================\n");
+  calculate(newMap);
 }
 
-// result
-let max = 0;
-for (let zzz in memoRes) {
-  let gunmen = 0;
-  memoRes[zzz].map(item => {
-    let itemJoined = item.join('|');
-    gunmen += (itemJoined.match(new RegExp("g", "g")) || []).length;
-    console.log(itemJoined);
-  });
-  console.log('Total gunmen:', gunmen);
-  console.log("\n");
-}
+let { max, ways } = calculateValues(globalResult);
 
-function test(map, extractedMap) {
-  // extractedMap.shift();
+console.log('Max gunmen:', max);
+console.log('Ways:', ways);
 
-  // console.log('sini', map, extractedMap);
-  // return;
-
-  function helper(newMap, memoExtMap = [], memoMap = []) {
-
-    let key = newMap.flat().join();
-    let em = [];
-
-    if (memoExtMap[key]) {
-      em = memoExtMap[key];
-    } else {
-      em = extractMap(newMap);
-      memoExtMap[key] = em;
-    }
-
-    // console.log(em);
-
-    for (let index in em) {
-
-    // console.log('--->', em);
-
-
-      let cell = em[index];
-      // extractedMap.splice(index, 1);
-
-      // console.log('sini', map, extractedMap);
-  // return;
-
-      if (isValidPosition(newMap, cell)) {
-        newMap = generate(newMap, cell);
-
-        // remove current pos, so can't be validate again
-        // extractedMap.splice(index, 1);
-        // console.log(em);
-        // console.log('outcome', newMap);
-
-        let key = newMap.flat().join();
-
-        if (memoMap[key]) {
-          data = memoMap[key];
-          continue;
-        } else {
-          data = JSON.parse(JSON.stringify(newMap));
-          memoMap[key] = data;
-        }
-
-        // em.shift();
-
-        // console.log(em);
-
-        helper(newMap, memoExtMap, memoMap);
-
-        newMap[cell.y][cell.x] = ' ';
-      }
-    }
-  }
-
-  helper(map);
-  // console.log(maxGunmen);
-
-  let key = data.flat().join();
-
-  if (!memoRes[key]) {
-    memoRes[key] = data;
-    // return data;
-  }
-
-  // return data;
-}
